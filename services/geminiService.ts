@@ -13,13 +13,30 @@ Analyze the user's input (image or video) and identify:
 4. Tools Needed: A list of specific tools required.
 5. The Fix: Step-by-step instructions.
 6. Visual Guide: A descriptive guide of what to look for, using text markup (e.g., "Look for the [Red Wire] connected to the [Blue Terminal]").
-7. Annotations: CRITICAL - Identify the EXACT location of the failure, damage, or broken part. 
-   - Draw tight bounding boxes ONLY around the specific defect (e.g., the crack, the leak, the burnt wire, the broken hinge). 
-   - DO NOT annotate generic objects, tools, or the entire appliance unless absolutely necessary for context.
-   - Focus specifically on the problem area that needs attention.
 
 Keep instructions simple, practical, and tailored to the exact scenario shown.
 If the image is unclear, provide general troubleshooting steps for what appears to be the object.
+`;
+
+const SYSTEM_INSTRUCTION_SUPPORT = `
+You are the friendly AI Support Assistant for the "FixIt AI" web application.
+Your role is to help users navigate and use the app features correctly.
+
+App Features & Capabilities:
+1. Upload: Users can drag & drop, paste (Ctrl+V), or browse to upload images/videos of broken items.
+2. Camera: Users can use the "Use Camera" button to take photos directly.
+3. Item Detection: When an image is uploaded, the app scans it to find specific repairable items.
+4. Repair Guides: We generate step-by-step fixes, tool lists, and safety warnings using advanced AI.
+5. History: Previous analyses are saved in the sidebar menu.
+6. Theme: Users can toggle between Dark and Light mode.
+
+Common Troubleshooting:
+- "Upload failed": Check internet connection, ensure file is <20MB, supported formats are JPG, PNG, MP4.
+- "Camera not working": Check browser permissions (allow camera access) or try a different browser.
+- "Analysis inaccurate": Suggest taking a clearer photo with better lighting or selecting the specific item correctly.
+
+Tone: Helpful, concise, friendly, and tech-savvy.
+Limitations: You are here to help with APP USAGE. If the user asks how to fix a specific physical object (e.g., "how to fix my toaster"), politely guide them to UPLOAD A PHOTO of it so the main FixIt AI can analyze it. Do not try to repair objects in this chat.
 `;
 
 const RESPONSE_SCHEMA_REPAIR: Schema = {
@@ -54,22 +71,6 @@ const RESPONSE_SCHEMA_REPAIR: Schema = {
     visualGuide: {
       type: Type.STRING,
       description: "A text-based description identifying key parts in the image/video to focus on."
-    },
-    annotations: {
-      type: Type.ARRAY,
-      items: {
-        type: Type.OBJECT,
-        properties: {
-          label: { type: Type.STRING, description: "Specific label for the defect (e.g., 'Cracked Screen', 'Leaking Pipe')" },
-          box_2d: { 
-            type: Type.ARRAY, 
-            items: { type: Type.INTEGER },
-            description: "Bounding box [ymin, xmin, ymax, xmax] on 1000x1000 grid. Order MUST be ymin, xmin, ymax, xmax."
-          }
-        },
-        required: ["label", "box_2d"]
-      },
-      description: "List of annotations focusing STRICTLY on defects, damage, or the specific problem area."
     }
   },
   required: ["title", "problemDescription", "rootCause", "safetyWarnings", "toolsNeeded", "steps", "visualGuide"]
@@ -134,8 +135,8 @@ export const analyzeMedia = async (base64Data: string, mimeType: string, focusCo
     
     // Customize prompt based on user selection
     const prompt = focusContext 
-      ? `Analyze the image focusing specifically on this item: "${focusContext}". Provide a detailed repair guide and annotations for this specific problem.`
-      : "Analyze this and provide a repair guide with annotations.";
+      ? `Analyze the image focusing specifically on this item: "${focusContext}". Provide a detailed repair guide for this specific problem.`
+      : "Analyze this and provide a repair guide.";
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
@@ -205,4 +206,29 @@ export const getChatResponse = async (
 
   const result = await chat.sendMessage({ message: newMessage });
   return result.text || "I couldn't generate a response.";
+};
+
+// New function for general App Support Chat
+export const getSupportChatResponse = async (
+  history: ChatMessage[],
+  newMessage: string
+): Promise<string> => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) throw new Error("API Key not found");
+
+  const ai = new GoogleGenAI({ apiKey });
+
+  const chat = ai.chats.create({
+    model: 'gemini-2.5-flash',
+    config: {
+      systemInstruction: SYSTEM_INSTRUCTION_SUPPORT,
+    },
+    history: history.map(msg => ({
+      role: msg.role,
+      parts: [{ text: msg.text }]
+    }))
+  });
+
+  const result = await chat.sendMessage({ message: newMessage });
+  return result.text || "I'm having trouble connecting right now. Please try again later.";
 };

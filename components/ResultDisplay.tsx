@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { FixItResponse, ChatMessage, Annotation } from '../types';
+import { FixItResponse, ChatMessage } from '../types';
 import { IconAlert, IconWrench, IconCheck, IconInfo, IconShield, IconHammer, IconMessage, IconSend, IconPlay, IconList } from './Icons';
 import { getChatResponse } from '../services/geminiService';
 
@@ -37,49 +37,6 @@ const formatText = (text: string) => {
     }
     return <span key={index}>{part}</span>;
   });
-};
-
-const AnnotatedImage: React.FC<{ imageUrl: string; annotations?: Annotation[] }> = ({ imageUrl, annotations }) => {
-  if (!annotations || annotations.length === 0) {
-    return (
-      <img src={imageUrl} alt="Analyzed" className="w-full h-auto rounded-lg" />
-    );
-  }
-
-  return (
-    <div className="relative w-full rounded-lg overflow-hidden group select-none">
-      <img src={imageUrl} alt="Analyzed with annotations" className="w-full h-auto block" />
-      {annotations.map((ann, idx) => {
-        // box_2d is [ymin, xmin, ymax, xmax] normalized to 1000
-        const [ymin, xmin, ymax, xmax] = ann.box_2d;
-        const top = (ymin / 1000) * 100;
-        const left = (xmin / 1000) * 100;
-        const height = ((ymax - ymin) / 1000) * 100;
-        const width = ((xmax - xmin) / 1000) * 100;
-
-        return (
-          <div
-            key={idx}
-            className="absolute border-2 border-red-500 shadow-[0_0_4px_rgba(255,255,255,0.5)] bg-red-500/10 hover:bg-red-500/20 transition-all cursor-help z-10"
-            style={{
-              top: `${top}%`,
-              left: `${left}%`,
-              height: `${height}%`,
-              width: `${width}%`
-            }}
-          >
-            {/* Label Tooltip */}
-            <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex flex-col items-center opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none">
-               <div className="bg-red-600 text-white text-[11px] font-bold px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                 {ann.label}
-               </div>
-               <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-red-600"></div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
 };
 
 const ResultDisplay: React.FC<ResultDisplayProps> = ({ data, onReset, onSelectAnother }) => {
@@ -203,23 +160,20 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ data, onReset, onSelectAn
         {/* Right Column: Steps & Visuals & Chat */}
         <div className="lg:col-span-2 space-y-6">
           
-          {/* Visual Guide & Annotations */}
+          {/* Visual Guide */}
           <div className="bg-slate-800 dark:bg-slate-900 text-slate-100 rounded-xl p-6 shadow-md border border-slate-700 dark:border-slate-800">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+              <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></div>
               <h3 className="text-lg font-semibold text-white">Visual Analysis</h3>
             </div>
             
-            {/* Annotated Image Overlay */}
+            {/* Plain Image Overlay */}
             {data.imageUrl && (
               <div className="mb-4 bg-black/50 rounded-lg overflow-hidden border border-slate-700">
-                <AnnotatedImage imageUrl={data.imageUrl} annotations={data.annotations} />
+                 <img src={data.imageUrl} alt="Analyzed Media" className="w-full h-auto block" />
               </div>
             )}
 
-            <p className="text-slate-400 italic mb-4 text-xs">
-              Highlighted areas indicate the primary defects or focus points.
-            </p>
             <div className="text-sm leading-relaxed text-slate-200">
               {formatText(data.visualGuide)}
             </div>

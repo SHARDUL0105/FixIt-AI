@@ -5,11 +5,6 @@ export interface RepairStep {
   detail: string;
 }
 
-export interface Annotation {
-  label: string;
-  box_2d: number[]; // [ymin, xmin, ymax, xmax] on 0-1000 scale
-}
-
 export interface FixItResponse {
   id?: string; // Unique ID for history
   timestamp?: number; // For sorting
@@ -21,7 +16,6 @@ export interface FixItResponse {
   toolsNeeded: string[];
   steps: RepairStep[];
   visualGuide: string; // Text-based description/markup
-  annotations?: Annotation[]; // Bounding boxes
 }
 
 export interface MediaFile {

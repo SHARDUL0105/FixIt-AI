@@ -1,3 +1,4 @@
+
 import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { IconUpload, IconCamera, IconPlay, IconClose } from './Icons';
 import { MediaFile } from '../types';
@@ -75,19 +76,36 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, onClear, isLoadin
     };
   }, []);
 
+  // Attach stream to video element when camera opens
+  useEffect(() => {
+    if (isCameraOpen && streamRef.current && videoRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+    }
+  }, [isCameraOpen]);
+
   const startCamera = async () => {
     try {
+      // Request camera access
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { facingMode: 'environment' } 
       });
+      
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
       setIsCameraOpen(true);
-    } catch (err) {
+      
+    } catch (err: any) {
       console.error("Error accessing camera:", err);
-      alert("Could not access camera. Please allow camera permissions.");
+      
+      // Handle specific error cases to guide the user
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        alert("Camera access was denied. Please allow camera permissions in your browser settings (usually the lock icon in the address bar) and try again.");
+      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        alert("No camera device found on your system.");
+      } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+         alert("Camera is currently in use by another application. Please close other apps using the camera and try again.");
+      } else {
+        alert("Could not access camera. Error: " + (err.message || "Unknown error"));
+      }
     }
   };
 
@@ -147,7 +165,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, onClear, isLoadin
             <video 
               ref={videoRef} 
               autoPlay 
-              playsInline 
+              playsInline
+              muted 
               className="w-full h-full object-cover" 
             />
             <div className="absolute bottom-6 flex gap-8 z-20 items-center">

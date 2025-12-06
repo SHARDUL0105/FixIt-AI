@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { analyzeMedia, detectItems } from './services/geminiService';
 import FileUpload from './components/FileUpload';
 import ResultDisplay from './components/ResultDisplay';
 import HistorySidebar from './components/HistorySidebar';
 import ItemSelector from './components/ItemSelector';
+import SupportChat from './components/SupportChat';
 import { FixItResponse, MediaFile, AppStatus, DetectedItem } from './types';
 import { IconWrench, IconMoon, IconSun, IconHistory, IconPlus } from './components/Icons';
 
@@ -14,7 +14,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<FixItResponse[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   
   // New state for detection flow
   const [currentMedia, setCurrentMedia] = useState<MediaFile | null>(null);
@@ -113,8 +113,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col transition-colors duration-300 relative">
       
+      {/* Support Chatbot */}
+      <SupportChat />
+
       <HistorySidebar 
         isOpen={isSidebarOpen} 
         onClose={() => setIsSidebarOpen(false)} 
