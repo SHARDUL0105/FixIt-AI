@@ -7,7 +7,7 @@ import HistorySidebar from './components/HistorySidebar';
 import ItemSelector from './components/ItemSelector';
 import SupportChat from './components/SupportChat';
 import { FixItResponse, MediaFile, AppStatus, DetectedItem } from './types';
-import { IconWrench, IconMoon, IconSun, IconHistory, IconPlus } from './components/Icons';
+import { IconWrench, IconMoon, IconSun, IconHistory, IconPlus, IconSparkles } from './components/Icons';
 
 const App: React.FC = () => {
   const [status, setStatus] = useState<AppStatus>(AppStatus.IDLE);
@@ -139,11 +139,11 @@ const App: React.FC = () => {
             </button>
 
             <div 
-              className="flex items-center gap-2 cursor-pointer" 
+              className="flex items-center gap-2 cursor-pointer group" 
               onClick={handleReset}
             >
-              <div className="bg-cyan-600 p-2 rounded-lg text-white">
-                <IconWrench className="w-5 h-5" />
+              <div className="bg-gradient-to-br from-cyan-500 to-blue-600 p-2 rounded-xl text-white shadow-lg shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-all">
+                <IconSparkles className="w-5 h-5" />
               </div>
               <span className="font-bold text-xl text-slate-800 dark:text-white tracking-tight">FixIt<span className="text-cyan-600">AI</span></span>
             </div>

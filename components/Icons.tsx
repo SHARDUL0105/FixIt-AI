@@ -19,7 +19,8 @@ import {
   Send,
   Plus,
   List,
-  Bot
+  Bot,
+  Sparkles
 } from 'lucide-react';
 
 export const IconWrench = (props: any) => <Wrench {...props} />;
@@ -41,3 +42,4 @@ export const IconSend = (props: any) => <Send {...props} />;
 export const IconPlus = (props: any) => <Plus {...props} />;
 export const IconList = (props: any) => <List {...props} />;
 export const IconBot = (props: any) => <Bot {...props} />;
+export const IconSparkles = (props: any) => <Sparkles {...props} />;
