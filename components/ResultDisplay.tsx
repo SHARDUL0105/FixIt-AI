@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { FixItResponse, ChatMessage } from '../types';
-import { IconAlert, IconWrench, IconCheck, IconInfo, IconShield, IconHammer, IconMessage, IconSend, IconPlay, IconList } from './Icons';
+import { IconAlert, IconWrench, IconCheck, IconInfo, IconShield, IconHammer, IconMessage, IconSend, IconList } from './Icons';
 import { getChatResponse } from '../services/geminiService';
 
 interface ResultDisplayProps {
@@ -142,11 +142,14 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ data, onReset, onSelectAn
 
           {/* Tools Needed */}
           <div className="bg-white dark:bg-slate-900 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-800">
-             <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2 mb-3">
-              <IconWrench className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-              Tools Needed
-            </h3>
-            <ul className="grid grid-cols-2 gap-2">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <IconWrench className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+                Tools Needed
+              </h3>
+            </div>
+            
+            <ul className="grid grid-cols-2 gap-2 mb-4">
               {data.toolsNeeded.map((tool, idx) => (
                 <li key={idx} className="flex items-center gap-2 text-slate-600 dark:text-slate-300 text-sm bg-slate-50 dark:bg-slate-800 p-2 rounded-lg">
                   <IconHammer className="w-3 h-3 text-slate-400 dark:text-slate-500" />

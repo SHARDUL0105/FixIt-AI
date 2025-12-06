@@ -7,9 +7,17 @@ interface FileUploadProps {
   onFileSelect: (file: MediaFile) => void;
   onClear?: () => void;
   isLoading: boolean;
+  title?: string;
+  loadingText?: string;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, onClear, isLoading }) => {
+const FileUpload: React.FC<FileUploadProps> = ({ 
+  onFileSelect, 
+  onClear, 
+  isLoading, 
+  title = "Upload Photo or Video", 
+  loadingText = "Analyzing..." 
+}) => {
   const [dragActive, setDragActive] = useState(false);
   const [preview, setPreview] = useState<MediaFile | null>(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -209,7 +217,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, onClear, isLoadin
           {isLoading && (
             <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center z-10">
               <div className="w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-              <p className="text-white font-medium animate-pulse">Analyzing failure points...</p>
+              <p className="text-white font-medium animate-pulse">{loadingText}</p>
             </div>
           )}
         </div>
@@ -245,7 +253,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, onClear, isLoadin
         </div>
         
         <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">
-          Upload Photo or Video
+          {title}
         </h3>
         <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 max-w-xs mx-auto">
           Drag & drop, paste from clipboard <kbd className="font-sans border border-slate-300 dark:border-slate-600 px-1 rounded text-xs bg-slate-50 dark:bg-slate-800">Ctrl+V</kbd>, or click to browse.
