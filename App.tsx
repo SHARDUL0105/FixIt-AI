@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { analyzeMedia, detectItems } from './services/geminiService';
 import FileUpload from './components/FileUpload';
@@ -169,10 +170,15 @@ const App: React.FC = () => {
 
             <button 
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
-              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              className="p-2 rounded-full transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+              title={isDarkMode ? "Current: Dark Mode. Switch to Light Mode" : "Current: Light Mode. Switch to Dark Mode"}
+              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
             >
-              {isDarkMode ? <IconSun className="w-5 h-5" /> : <IconMoon className="w-5 h-5" />}
+              {isDarkMode ? (
+                <IconSun className="w-5 h-5 text-amber-400 fill-amber-400/20" /> 
+              ) : (
+                <IconMoon className="w-5 h-5 text-cyan-600 fill-cyan-600/20" />
+              )}
             </button>
 
             <div className="hidden md:block text-xs font-medium text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700">
