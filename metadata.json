@@ -1,0 +1,7 @@
+{
+  "name": "FixIt AI",
+  "description": "An intelligent troubleshooting assistant that analyzes images or videos of broken items to provide step-by-step repair instructions, safety warnings, and tool recommendations.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
